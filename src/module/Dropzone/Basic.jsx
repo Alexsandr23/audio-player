@@ -20,7 +20,9 @@ export function Basic({texInsideBlock, uploadResult}) {
                         const result = await uploadFile('photo', file, 'upload', stateAuth.token)
                         if (result) {
                         await avatarMutation({idUser: stateAuth.payload.sub.id, idImg: result._id})
-                        dispatch(actionAboutMe())
+                        dispatch(actionAboutMe()) // как понял после трков тут тоже проблема с асинхронщиной, то что я писал если первый раз делаешь все работет 
+                                                    // если второй подряд даже запроса в сети нет  actionAboutMe, если сделать еще несколько запросов таких или других \
+                                                    // то появится вотрой запрос а не последний  
                         }
                         
                     } catch (error) {
@@ -31,7 +33,9 @@ export function Basic({texInsideBlock, uploadResult}) {
                         const res = await uploadFile('track', file, 'track', stateAuth.token)
                         console.log(res)
                             if (res) {
-                              
+                              // хочу сделать запрос на новый трек чтобы его потом передать в босс компонент чтобы была полная информация 
+                              // и как правильно сделать если я делаю await uploadResult(res) то мой босс компонент не дожидается даже если я переделаю функцию getuploadResult
+                              // в асинхроную как сделать правильно? с асинхронщиной запутался 
                             }
                         await uploadResult(res)
                         

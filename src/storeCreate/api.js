@@ -46,7 +46,7 @@ export const api = createApi({
                 }`,
                 variables: {query: JSON.stringify([{_id}])}
             }),
-            providesTags: (result, error, {_id}) => {  //функція, яка створює тег, який ідентіфікує користувача
+            providesTags: (result, error, {_id}) => { 
                 return ([{ type: 'User', id: _id}])
             }
         }),

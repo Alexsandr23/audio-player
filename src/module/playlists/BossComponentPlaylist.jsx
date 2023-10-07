@@ -136,7 +136,7 @@ const EditPlaylist = ({onSave, initialPlaylist}) => {
 
     const addTrackToState = () => setplaylist({...playlist, 
                                           tracks: [...playlist.tracks, ...uploadResult]})
-    const deletetrack = track => setplaylist({...playlist, tracks: playlist.tracks.filter(i => i !== track)})
+    const deletetrack = track => setplaylist({...playlist, tracks: playlist.tracks.filter(i => i !== track)}) // не рабоает удаление по клику что то не так не пойму почему
 
     const localplaylisttrack  = ({track}) => <TrackFromPlaylist track={track} 
                                                    onDelete={trackToDelete => deletetrack(trackToDelete)}/>
