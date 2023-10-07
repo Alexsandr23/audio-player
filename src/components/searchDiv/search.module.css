@@ -1,0 +1,14 @@
+.divSearch {
+    display: flex;
+    background-color: #292929;
+    width: 170px;
+    border-radius: 5px;
+    margin: 0 5px;
+    
+}
+.divSearch > input {
+    background-color: #292929;
+    border: none;
+    outline: none;
+    color: #7f7f7f;
+}

@@ -1,0 +1,26 @@
+body {
+  background-color: #000;
+}
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.link {
+  text-decoration: none;
+  color: #fff;
+}
+.stylePage {
+  flex-grow: 1;  
+  background: linear-gradient(180deg, rgba(62,62,62,1) 0%, rgba(75,75,78,1) 61%, rgba(136,136,136,1) 100%); 
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
+  padding: 10px 20px;
+}
+.bgElement {
+  background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(40,40,50,1) 100%, rgba(147,156,158,1) 100%);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+  opacity: 0.8;
+}

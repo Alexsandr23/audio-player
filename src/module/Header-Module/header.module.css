@@ -1,0 +1,25 @@
+.wraper {
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(40,40,50,1) 100%, rgba(147,156,158,1) 100%);
+    color: #7f7f7f;
+    padding: 10px 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+    opacity: 0.8;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    text-align: center;
+    height: 45px;
+}
+.logo {
+    text-decoration: none;
+    color: #ababab;
+    font-weight: 500;
+    margin-right: 50px;
+}
+

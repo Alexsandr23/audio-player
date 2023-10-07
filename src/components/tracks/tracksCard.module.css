@@ -1,0 +1,9 @@
+.cardStyle {
+    display: flex; 
+    justify-content: space-between;
+    border: 1px solid #fff; 
+    padding: 5px 10px; 
+    flex-basis: 280px; 
+    font-size: 0.7rem;
+    margin: 5px;
+}
