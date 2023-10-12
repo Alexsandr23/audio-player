@@ -10,26 +10,22 @@ export const playerSlice = createSlice({
         isStopped: true,
         duration: 0,
         track: null,
-        playlist: {
-            _id:"",
-            url:"",
-            tracks:[]
-        },
+        playlist: null,
         playlistIndex: 0,
         currentTime: 0,
-        volume: 50
+        volume: 0.5
     },
     reducers: {
         play(state) {
             if (state.track && state.track.url) {
-              if (audio.src !== `${backendUrl}${state.track.url}`) {
-                audio.src = `${backendUrl}${state.track.url}`
-                audio.load()
-              }
-              audio.volume = state.volume
-              audio.play()
-              state.isPlaying = true
-              state.isStopped = false
+                if (audio.src !== `${backendUrl}${state.track.url}`) {
+                    audio.src = `${backendUrl}${state.track.url}`
+                    audio.load()
+                }
+                audio.volume = state.volume
+                audio.play()
+                state.isPlaying = true
+                state.isStopped = false
             }
           },
         pause (state) {
@@ -47,23 +43,47 @@ export const playerSlice = createSlice({
         },
         setDuration (state, {payload}) {
             state.duration = payload
+            
         },
         nextTrack (state) {
-            const nextIndex = state.playlistIndex + 1
-            if (state.playlist.tracks[nextIndex]) {
-                state.track = state.player.playlist.tracks[nextIndex]
-                state.playlistIndex = nextIndex
+            if (state.playlist && state.playlist.tracks) {
+                const nextIndex = state.playlistIndex + 1
+                if (state.playlist.tracks[nextIndex]) {
+                    state.track = state.playlist.tracks[nextIndex]
+                    state.playlistIndex = nextIndex
+                }
             }
         },
         prevTrack (state) {
-            const prevIndex = state.playlistIndex - 1
-            if (state.playlist.tracks[prevIndex]) {
-                state.track = state.playlist.tracks[prevIndex]
-                state.playlistIndex = prevIndex
+            if (state.playlist && state.playlist.tracks) {
+                const prevIndex = state.playlistIndex - 1
+                if (state.playlist.tracks[prevIndex]) {
+                    state.track = state.playlist.tracks[prevIndex]
+                    state.playlistIndex = prevIndex
+                }
             }
         },
-        setPlayList (state, {payload}) {
-            state.playlist = payload
+        setPlaylist (state, {payload}) {
+            if (payload === null) {
+                state.playlist = null
+                state.playlistIndex = 0
+                return
+              }
+            const validTracks = payload.tracks.filter((track) => track.url)
+            console.log(validTracks)
+            state.playlist = {...payload, tracks: validTracks}
+            if (state.track && state.playlist) {
+                const trackIndex = state.playlist.tracks.findIndex(
+                    (track) => track._id === state.track._id
+                )
+                if (trackIndex !== -1) {
+                    state.playlistIndex = trackIndex
+                } else {
+                    state.playlistIndex = 0
+                }
+            } else {
+                state.playlistIndex = 0
+            }
         },
         setCurrentTime (state, {payload}) {
             state.currentTime = payload
@@ -87,7 +107,7 @@ export const {
     setDuration, 
     nextTrack, 
     prevTrack, 
-    setPlayList, 
+    setPlaylist, 
     setCurrentTime,
     setVolume } = playerSlice.actions
 

@@ -105,7 +105,7 @@ export const api = createApi({
             })
         }),
         getTrackId: builder.query ({
-            query:({id}) => ({
+            query:({_id}) => ({
                 document: `
                 query trackOneId ($idTrack: String) {
                     TrackFindOne (query: $idTrack){
@@ -118,23 +118,63 @@ export const api = createApi({
                     }
                   }
                 `,
-                variables: {id: JSON.stringify([{id}])}})
+                variables: { idTrack: JSON.stringify([{ _id}]) }})
         }), 
-        getPlaylists: builder.query ({
-            query:() => ({
+        getPlaylistsMy: builder.query ({
+            query:({idUser}) => ({
                 document: `
-                    query plsFull {
-                        PlaylistFind (query: "[{}]") {
-                        _id name description tracks {
+                query MyPlaylists ($idUser: String){
+                    PlaylistFind(query: $idUser) {
+                          _id
+                          name
+                          description
+                          tracks {
                             _id
                             url
-                            id3 {title artist album}
+                            id3 {
+                              title
+                              artist
+                              album
+                            }
+                          }
                         }
+                      }
+                    `,
+                    variables: {idUser: JSON.stringify([{"___owner": `${idUser}`}])}
+                })
+        }),
+        getTracksMy: builder.query ({
+            query:({idUser}) => ({
+                document: `
+                        query trackFind($idUser: String)  {
+                            TrackFind (query: $idUser){
+                            _id url 
+                            id3{
+                            title
+                            artist
+                            album
+                            }
+                            }
                         }
-                    }
-                    `
-            })
+                    `,
+                    variables: {idUser: JSON.stringify([{"___owner": `${idUser}`}])}
+                })
         }), 
+        getPlaylist: builder.query ({
+            query:() => ({
+                document: `
+                        query plsFull {
+                            PlaylistFind (query: "[{}]") {
+                            _id name description tracks {
+                                    _id
+                                url
+                                id3 {title artist album}
+                            }
+                            }
+                        }
+                    `
+                })        
+        }),
         getPlaylistId: builder.query ({
             query:({_id}) => ({
                 document: `
@@ -150,26 +190,57 @@ export const api = createApi({
                     `,
                     variables: {_id: JSON.stringify([{_id}])}})
         }),
+        deletePlaylist: builder.mutation ({
+            query:({playlistId}) => ({
+                document: `
+                        mutation DeletePlaylist($playlistId: ID) {
+                            PlaylistDelete(playlist:{_id: $playlistId}) {
+                            _id
+                            }
+                        }
+                    `,
+                    variables: {playlistId: JSON.stringify([{playlistId}])}})
+        }),
         upsertPlaylist: builder.mutation({
-            query: ({playlistId, namePls, descriptionPls, trackIds}) => ({
+            query: ({playlistId, namePls, descriptionPls, tracksId}) => ({
                 document: `
                             mutation UpsertPlaylist(
                                 $playlistId: ID
                                 $namePls: String!
                                 $descriptionPls: String!
-                                $trackIds: [TrackInput]
+                                $tracksId: [TrackInput]
                             ) {
                                 PlaylistUpsert(playlist: {
                                 _id: $playlistId
                                 name: $namePls
                                 description: $descriptionPls
-                                tracks: $trackIds
+                                tracks: $tracksId
                                 }) {
-                                _id
+                                    _id name description tracks {
+                                    _id
+                                    url
+                                    id3 {title artist album}
+                                }
                                 }
                             }
                         `,
-                        variables: {playlistId, namePls, descriptionPls, trackIds}})
+                        variables: {playlistId, namePls, descriptionPls, tracksId}})
+        }),
+        searchTrack: builder.query ({
+            query:({title}) => ({
+                document: `
+                        query trackFind ($title: String) {
+                            TrackFind (query: $title){
+                            _id url 
+                            id3{
+                            title
+                            artist
+                            album
+                            }
+                            }
+                        }
+                        `,
+                    variables: {title: JSON.stringify([{"id3.title": `/${title}/`}])}})
         }),
         
     })
@@ -183,11 +254,15 @@ export const {
     usePasswordChangeMutation,
     usePrefetch,
     useGetUserByIdQuery,
-    useGetPlaylistsQuery,
+    useGetPlaylistsMyQuery,
     useRegistrationMutation,
     useSetUserNickMutation,
     useSetAvatarMutation,
     useGetPlaylistIdQuery,
-    useUpsertPlaylistMutation
+    useUpsertPlaylistMutation,
+    useSearchTrackQuery, 
+    useGetTracksMyQuery,
+    useGetPlaylistQuery,
+    useDeletePlaylistMutation
 
             } = api

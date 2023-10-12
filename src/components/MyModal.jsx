@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Box, Typography } from "@mui/material";
 
-const MyModal = ({ open, onClose, children, render, isLogin}) => {
+const MyModal = ({ open, onClose, children, render}) => {
   const style = {
     width: 400,
     bgcolor: "background.paper",
@@ -19,7 +19,6 @@ const MyModal = ({ open, onClose, children, render, isLogin}) => {
       onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      isLogin={isLogin}
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h6" component="h2">

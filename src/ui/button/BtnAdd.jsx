@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 const BtnAdd = ({...props}) => {
     return (
         <>
-            <MyButton style={{padding: "0"}}{...props}><AddIcon/></MyButton>
+            <MyButton {...props}><AddIcon/></MyButton>
         </>
         
     )

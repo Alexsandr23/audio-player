@@ -5,7 +5,7 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 const BtnPrev = ({...props}) => {
     return (
         <>
-            <MyButton style={{padding: "0"}}{...props}><SkipPreviousIcon/></MyButton>
+            <MyButton {...props}><SkipPreviousIcon/></MyButton>
         </>
         
     )

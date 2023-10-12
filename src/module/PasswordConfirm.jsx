@@ -9,10 +9,10 @@ const PasswordConfirm = ({onPasswordChange, onPasswordMatch, onStrongPassword}) 
     const [passwordValid, setPasswordValide] = useState("")
     const [passwordMatch, setPasswordMatch] = useState(true)
     const [strongPassword, setStrongPassword] = useState(true)
-    console.log(passwordMatch, strongPassword)
+    console.log( passwordValid)
     return (
         <>
-            <div style={{width: "173px", border: password.length === 0 || strongPassword ? "2px solid black" : "2px solid red", borderRadius: "5px"}} >
+            <div style={{width: "220px", border: password.length === 0 || strongPassword ? "2px solid black" : "2px solid red", borderRadius: "5px"}} >
                 <MyInput 
                     type="password"
                     onChange={e => {
@@ -27,7 +27,7 @@ const PasswordConfirm = ({onPasswordChange, onPasswordMatch, onStrongPassword}) 
                     placeholder = "Пароль"
                     />
             </div>
-            <div style={{width: "173px", border: passwordValid !== 0 && passwordMatch ? "2px solid black" : "2px solid red", borderRadius: "5px"}} >
+            <div style={{width: "220px", border: passwordValid !== 0 && passwordMatch ? "2px solid black" : "2px solid red", borderRadius: "5px"}} >
                 <MyInput 
                     type="password" 
                     onChange={e => {

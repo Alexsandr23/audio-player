@@ -4,8 +4,7 @@ import MyInput from "../ui/input/MyInput"
 import MyButton from "../ui/button/MyButton"
 import {useLoginMutation } from "../storeCreate/api"
 import { useDispatch } from "react-redux"
-import { login, logout } from "../storeCreate/authSlice"
-import { actionAboutMe } from "../storeCreate/helpers/actionAboutMe"
+import { logout } from "../storeCreate/authSlice"
 import { actionFullLogin } from "../storeCreate/helpers/actionFullLogin"
 
 
@@ -13,6 +12,7 @@ const LoginForm = () => {
     const [loginValue, setLogin] = useState('')
     const [password, setPassword] = useState('')
     const [loginQuery, {isLoading, data}] = useLoginMutation()
+    console.log(isLoading, data)
     
     const dispatch = useDispatch()
 

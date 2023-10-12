@@ -6,10 +6,10 @@ export const actionAboutMe = () =>
         const {auth} = getState()
         if (auth.payload){
             const {id} = auth.payload.sub
-            const response = await dispatch(api.endpoints.getUserById.initiate({_id: id}))
-            if (!response.error) {
+            const response = await dispatch(api.endpoints.getUserById.initiate({_id: id})) 
+            if (response) {
                 console.log("Обновление данных о пользователе:", response.data.UserFindOne)
-                dispatch(setAboutMe(response.data.UserFindOne));
+                dispatch(setAboutMe(response.data.UserFindOne))
               }
         }
     }

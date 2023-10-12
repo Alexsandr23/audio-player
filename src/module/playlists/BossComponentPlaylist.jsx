@@ -15,6 +15,13 @@ import TracksCard from "../../components/tracks/TracksCard";
 import MyInput from "../../ui/input/MyInput"
 import MyButton from "../../ui/button/MyButton";
 import { Basic } from "../Dropzone/Basic";
+import SearchContainer from "../../components/searchDiv/SearchContainer";
+import { useDeletePlaylistMutation, useSearchTrackQuery } from "../../storeCreate/api";
+import {history} from "../../App"
+import "../../App.css"
+import { useDispatch } from 'react-redux';
+import { addAndPlayTrack } from "../../storeCreate/playerThunk";
+import {useUpsertPlaylistMutation} from "../../storeCreate/api"
 
 
 
@@ -30,17 +37,8 @@ const SortableItem = (props) => {
   const itemStyle = {
     transform: CSS.Transform.toString(transform),
     transition,
-    //width: 110,
-    //height: 30,
-    //display: "flex",
-    //alignItems: "center",
-    //paddingLeft: 5,
-    //border: "1px solid gray",
-    //borderRadius: 5,
-    //marginBottom: 5,
-    //userSelect: "none",
     cursor: "grab",
-    //boxSizing: "border-box"
+   
   };
     
     const Render = props.render
@@ -55,13 +53,14 @@ const SortableItem = (props) => {
 
 const Droppable = ({ id, items, itemProp, keyField, render }) => {
   const { setNodeRef } = useDroppable({ id });
+  console.log(setNodeRef)
 
-  const droppableStyle = {
-    //padding: "20px 10px",
-    //border: "1px solid black",
-    //borderRadius: "5px",
-    //minWidth: 110
-  };
+  // const droppableStyle = {
+  //   //padding: "20px 10px",
+  //   //border: "1px solid black",
+  //   //borderRadius: "5px",
+  //   //minWidth: 110
+  // };
 
   return (
     <SortableContext id={id} items={items} strategy={rectSortingStrategy}>
@@ -79,10 +78,12 @@ function Dnd({items:startItems, render, itemProp, keyField, onChange, horizontal
 
     useEffect(() => setItems(startItems), [startItems])
 
+   
     useEffect(() => {
         if (typeof onChange === 'function'){
             onChange(items)
         }
+     // eslint-disable-next-line 
     }, [items])
 
     const sensors = useSensors(
@@ -119,75 +120,119 @@ function Dnd({items:startItems, render, itemProp, keyField, onChange, horizontal
   );
 }
 
-// const getRandomItemFromArr = arr => arr[Math.floor(Math.random() * arr.length)]
-
-const TrackFromPlaylist = ({track, onDelete}) => <TracksCard key={track._id} track={track} onClick={() => onDelete(track)}></TracksCard>
-{/* <img src={track.url} key={track._id} onClick={() => onDelete(track)}/> */}
-
+const TrackFromPlaylist = ({track, onDelete}) => {
+    const dispatch = useDispatch()
+    const playTrack = (track) => {
+        dispatch(addAndPlayTrack(track))
+    }
+    return (
+        <TracksCard key={track._id} track={track} clickDelete={() => {onDelete(track)}} playTrack={playTrack}></TracksCard>
+    )
+} 
 const EditPlaylist = ({onSave, initialPlaylist}) => { 
+    const dispatch = useDispatch()
+    const [searchQuery, setSearchQuery] = useState("")
+    const [searchTracks, setSearchTracks] = useState([])
+    const { isLoading, refetch } = useSearchTrackQuery({ title: searchQuery },{skip: !searchQuery})
+    const [deletePlaylist, {isLoading: loadingDelete}] = useDeletePlaylistMutation()
+    console.log( loadingDelete)
+
+    const goBackPlaylist = () => history.push(`/`)
+
+    useEffect(() => {
+        if (searchQuery) {
+            refetch({ title: searchQuery }).then(result => {
+                if (result.data) {
+                    const newSearchResults = result.data.TrackFind
+                    console.log(newSearchResults)
+                    setSearchTracks(newSearchResults)
+                }
+          })
+        }
+      }, [searchQuery, refetch, isLoading, searchTracks])
+
+    const searchTrack = (nameTrack) => {
+        console.log(nameTrack)
+        setSearchQuery(nameTrack)
+    }
+    const playTrack = (track) => {
+        dispatch(addAndPlayTrack(track))
+    }
+
     const [playlist, setplaylist] = useState(initialPlaylist || {name: "", description: "", tracks: []})
-    const [uploadResult, setUploadResult] = useState([])
 
     const getuploadResult = (result) => {
-        setUploadResult((prevResults) => [...prevResults, result])
-        addTrackToState()
-    }
-    console.log(uploadResult)
-
-    const addTrackToState = () => setplaylist({...playlist, 
-                                          tracks: [...playlist.tracks, ...uploadResult]})
-    const deletetrack = track => setplaylist({...playlist, tracks: playlist.tracks.filter(i => i !== track)}) // не рабоает удаление по клику что то не так не пойму почему
+        setplaylist((prevPlaylist) => ({
+          ...prevPlaylist,
+          tracks: [...prevPlaylist.tracks, result]
+        }));
+      }
+  
+    const deletetrack = track => {
+      console.log("Удаляю трек:", track)
+      setplaylist({...playlist, tracks: playlist.tracks.filter(i => i !== track)})}
 
     const localplaylisttrack  = ({track}) => <TrackFromPlaylist track={track} 
                                                    onDelete={trackToDelete => deletetrack(trackToDelete)}/>
-    console.log(playlist)
     return (
-        <div>
-            <div>
-                <p>Назва плейліста: {playlist.name}</p>
-                <MyInput type='text' value={playlist.name} placeholder="Зміти назву"
-                        onChange = {e => setplaylist({...playlist, name: e.target.value})}/>
-                <p>Опис: {playlist.description}</p>
-                <MyInput type='text' value={playlist.description || ""} placeholder="Змити опис"
-                        onChange = {e => setplaylist({...playlist, description: e.target.value})}/> 
+        <>
+            <h3>Редагування плейліста</h3>
+            <div style={{display: "flex", gap: "10px", padding: "10px"}}>
+                <div style={{flex: "1"}}>
+                    <p>Назва плейліста:</p>
+                    <MyInput type='text' value={playlist.name} placeholder="Додати назву"
+                                onChange = {e => setplaylist({...playlist, name: e.target.value})}/>
+                </div>
+                <div style={{flex: "2"}}>
+                    <p>Опис:</p>
+                    <textarea rows="5" cols="50" value={playlist.description || ""} placeholder="Додати опис"
+                            onChange = {e => setplaylist({...playlist, description: e.target.value})}></textarea>
+                </div>
             </div>
-            <div>
-                <Basic texInsideBlock={"Додати треки"} uploadResult={getuploadResult}></Basic>
-                <MyButton onClick={addTrackToState}>+</MyButton>
+            <div style={{display: "flex", gap: "10px"}}>
+                <div style={{flex: "1"}}>
+                    <div>
+                        <Basic texInsideBlock={"Завантажити треки"} uploadResult={getuploadResult}></Basic>
+                    </div>
+                    <div className="bgElement scrolStyle" style={{ height: "293px", padding: "20px", margin: "15px 0 0 0 "}}>
+                        <div>
+                            <SearchContainer onSearch={searchTrack}></SearchContainer>
+                        </div>
+                        <div>
+                            {searchTracks ?
+                                searchTracks.map( track => (
+                                    <TracksCard key={track._id} track={track} showBtn={true} playTrack={playTrack} addTrackInPlaylist={getuploadResult}></TracksCard>
+                                )) : null 
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="bgElement scrolStyle" style={{flex: "1", height: "450px", padding: "20px"}}>
+                    <Dnd items={playlist.tracks} render={localplaylisttrack} itemProp="track" keyField="_id"
+                        onChange={tracks => setplaylist({...playlist, tracks})} 
+                        />
+                    
+                </div>
             </div>
-
-            <div>
-                <Dnd items={playlist.tracks} render={localplaylisttrack} itemProp="track" keyField="_id"
-                     onChange={tracks => setplaylist({...playlist, tracks})} 
-                    />
-                
-            </div>
-            <MyButton onClick = {() => onSave(playlist)}>Save</MyButton>
-        </div>
+            <MyButton onClick = {() => {
+                onSave(playlist)
+                goBackPlaylist()                    
+              }}>Зберегти редагування</MyButton>
+            <MyButton onClick={() => deletePlaylist({playlistId: playlist._id})}>Видалити плейліст</MyButton>
+        </>
     )
 }
 
-// const data = [{name: 'aaa', _id: 'a1'},{name: 'bbb', _id: 'b2'}, {name: 'ccc', _id: 'c3'},
-//               {name: 'ddd', _id: 'd4'},
-//               {name: 'eee', _id: 'e4'}
-//              ]
-
-
-// const Item = ({track:{id3}}) => <TracksCard track={id3}></TracksCard>
-
-// const Item = ({item:{name}}) =>
-// <div style={{backgroundColor: 'green', fontSize: '2em', padding: '20px', borderRadius: '20px', margin: '10px'}}>
-//     {name}
-// </div>
 
 const BossComponentPlaylist = ({initialPlaylist}) => {
-    
+    const [upsertPlaylist, {isLoading, isError}] = useUpsertPlaylistMutation()
+    console.log(isLoading, isError)
     return (
         <div >
-            <EditPlaylist onSave={playlist => console.log(playlist)} initialPlaylist={initialPlaylist} />
-            {/* <Dnd items={data.PlaylistFindOne.tracks} render={Item} itemProp="track" keyField="_id"
-                 onChange={newArray => console.log('new array', newArray)} 
-                /> */}
+            <EditPlaylist onSave={playlist => {
+                upsertPlaylist({playlistId: playlist._id, namePls: playlist.name, descriptionPls: playlist.description, tracksId: playlist.tracks.map(track => ({_id: track._id }))})
+            } } initialPlaylist={initialPlaylist} />
+
         </div>
 
     )

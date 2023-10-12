@@ -5,7 +5,7 @@ import SkipNextIcon from '@mui/icons-material/SkipNext';
 const BtnNext = ({...props}) => {
     return (
         <>
-            <MyButton style={{padding: "0"}}{...props}><SkipNextIcon/></MyButton>
+            <MyButton {...props}><SkipNextIcon/></MyButton>
         </>
         
     )

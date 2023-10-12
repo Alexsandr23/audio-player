@@ -5,7 +5,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 const BtnPlay = ({...props}) => {
     return (
         <>
-            <MyButton style={{padding: "0"}}{...props}><PlayArrowIcon/></MyButton>
+            <MyButton {...props}><PlayArrowIcon/></MyButton>
         </>
         
     )

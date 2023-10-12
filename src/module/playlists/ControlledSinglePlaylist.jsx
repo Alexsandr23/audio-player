@@ -5,12 +5,8 @@ import Spiner from "../../ui/Spiner";
 
 
 const ControlledSinglePlaylist = ({id}) => {
- 
   const { data, isLoading } = useGetPlaylistIdQuery({_id: id})
-  console.log(useGetPlaylistIdQuery())
-  console.log(isLoading, data)
   
-
     return isLoading ?
         <div style={{width: "inherit", height: "inherit", display: "flex"}}>
             <Spiner/>
@@ -18,7 +14,6 @@ const ControlledSinglePlaylist = ({id}) => {
         <div>
             <SinglePlaylistView playlist={data.PlaylistFindOne}></SinglePlaylistView>          
         </div>
-    
 }
 
 export default ControlledSinglePlaylist

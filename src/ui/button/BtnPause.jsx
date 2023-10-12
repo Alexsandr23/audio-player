@@ -5,7 +5,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 const BtnPause = ({...props}) => {
     return (
         <>
-            <MyButton style={{padding: "0"}}{...props}><PauseIcon/></MyButton>
+            <MyButton{...props}><PauseIcon/></MyButton>
         </>
         
     )

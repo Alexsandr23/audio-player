@@ -14,10 +14,8 @@ const RegistrationForm = () => {
     const [isPasswordMatch, setIsPasswordMatch] = useState(false)
     const [strongPassword, setStrongPassword] = useState(false)
     const [registrationMutation, {isLoading, data}] = useRegistrationMutation()
-    console.log("23",!isPasswordMatch && !strongPassword)
-
-    console.log(isPasswordMatch, strongPassword)
-
+    console.log(isLoading, data)
+ 
     const dispatch = useDispatch()
 
     const passwordMatch = (matchStatus) => {
@@ -29,16 +27,15 @@ const RegistrationForm = () => {
             setPassword("")
             return
         }
-        if (!isPasswordMatch && !strongPassword){
-            return
-        } 
-        try {
+        try {   
+            if (isPasswordMatch && strongPassword) {
                 const response = await registrationMutation({login: login, password: password})
                 if (response.data) {
                     dispatch(actionFullLogin(login, password)) 
                 } else {
                     dispatch(logout())
                 }
+            }
         } catch (error) {
             console.error(error)
         }
@@ -53,7 +50,7 @@ const RegistrationForm = () => {
     }
     return (
         <div style={containerStyle}>
-            <div  style={{width: "173px", border: "2px solid black", borderRadius: "5px"}}>
+            <div  style={{width: "220px", border: "2px solid black", borderRadius: "5px"}}>
                 <MyInput placeholder="Логін" value={login} onChange={e => setLogin(e.target.value)} style = {{border: "none"}}/>
             </div>
             <PasswordConfirm onPasswordChange={password => setPassword(password)} onPasswordMatch={passwordMatch} onStrongPassword ={obj => setStrongPassword(obj)}/>

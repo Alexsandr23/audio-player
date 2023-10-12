@@ -11,11 +11,12 @@ const PlaylistView = ({playlist}) => {
         className="bgElement"
         style={{
                     border: "1px solid #fff", 
-                    padding: "0 5px 5px", 
-                    flex: "1", 
+                    padding: "5px",  
                     flexBasis: "1", 
                     textDecoration: "none", 
                     color: "#fff", 
+                    flex: "0 0 calc(23.33% - 10px)",
+                    width: "calc(23.33% - 10px)",
                 }}>
             <p>{playlist.name}</p>
             <p>Опис: {playlist.description || `------`}</p>

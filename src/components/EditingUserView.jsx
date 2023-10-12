@@ -4,6 +4,7 @@ import MyInput from "../ui/input/MyInput";
 import {Basic} from "../module/Dropzone/Basic"
 
 const EditingUserView = ({onLogout, setNick,  newNick, setNewNick}) => {
+    
 
     return (
         <>  

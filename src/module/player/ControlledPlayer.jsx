@@ -5,16 +5,14 @@ import {
     play,
     pause,
     stop,
-    setTrack,
     setDuration,
     nextTrack,
     prevTrack,
-    setPlayList,
     setCurrentTime,
     setVolume,
   } from "../../storeCreate/playerSlice"
 import {audio} from "../../storeCreate/playerSlice"
-import { actionPlayAudio } from "../../storeCreate/playerThunk";
+import { addAndPlayTrack} from "../../storeCreate/playerThunk";
 
 
 
@@ -23,23 +21,32 @@ const ControlledPlayer = ({render: Render = PlayerView, ...props}) => {
     const playerState = useSelector((state) => state.player)
 
     audio.ondurationchange = () => {
-      dispatch(setDuration(audio.duration))
+        dispatch(setDuration(audio.duration))
     }
 
     audio.ontimeupdate = () => {
-      dispatch(setCurrentTime(audio.currentTime))
+        dispatch(setCurrentTime(audio.currentTime))
     }
     const trackTimeChange = (event, newValue) => {
-      
-      setCurrentTime(newValue)
-      audio.currentTime = newValue
-
+        dispatch(pause())
+        setCurrentTime(newValue)
+        audio.currentTime = newValue
     }
-    
+    audio.onended = () => {
+        dispatch(nextTrack())
+        if (playerState.playlist && playerState.playlist.tracks[playerState.playlistIndex]) {
+            dispatch(play())
+        } else {
+            dispatch(stop())
+        }
+    }
     const playTrack = () => {
-        dispatch(actionPlayAudio())
+        dispatch(play())
         
       }
+    const playTrackPlaylist = (track) => {
+        dispatch(addAndPlayTrack(track))
+    } 
     
       const pauseTrack = () => {
         dispatch(pause())
@@ -51,10 +58,20 @@ const ControlledPlayer = ({render: Render = PlayerView, ...props}) => {
     
       const nextTrackHandler = () => {
         dispatch(nextTrack())
+        if (playerState.playlist && playerState.playlist.tracks[playerState.playlistIndex]) {
+            dispatch(play())
+        } else {
+            dispatch(stop())
+        }
       }
     
       const prevTrackHandler = () => {
         dispatch(prevTrack())
+        if (playerState.playlist && playerState.playlist.tracks[playerState.playlistIndex]) {
+            dispatch(play())
+        } else {
+            dispatch(stop())
+        }
       }
     
       const setVolumeHandler = (value) => {
@@ -72,6 +89,7 @@ const ControlledPlayer = ({render: Render = PlayerView, ...props}) => {
         prevTrackHandler={prevTrackHandler}
         setVolumeHandler={setVolumeHandler}
         trackTimeChange={trackTimeChange}
+        playTrackPlaylist={playTrackPlaylist}
     />
 }
 

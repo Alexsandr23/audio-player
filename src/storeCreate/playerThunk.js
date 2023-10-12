@@ -1,4 +1,4 @@
-import { play, pause, stop, setTrack, setPlaylist, setCurrentTime, nextTrack, prevTrack, setVolume } from './playerSlice';
+import { play, setTrack, setPlaylist } from './playerSlice';
 
 
 export const addAndPlayTrack = (track) => 
@@ -6,7 +6,10 @@ export const addAndPlayTrack = (track) =>
         dispatch(setTrack(track))
         dispatch(play())
     }
-
+export const actionSetPlaylist = (playlist) => 
+    async (dispatch) => {
+        dispatch(setPlaylist(playlist))
+    }
 
 export const actionPlayAudio = () => async (dispatch, getState) => {
   const { player } = getState();

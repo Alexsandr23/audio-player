@@ -1,8 +1,8 @@
 .container {
     display: flex;
     flex-direction: column;
-    margin: 20px 0;
-    padding: 20px;
+    margin: 0 0 20px 0;
+    padding: 10px;
     background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(40,40,50,1) 100%, rgba(147,156,158,1) 100%);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
@@ -10,7 +10,7 @@
   }
   
   .dropzone {
-    margin: 20px;
+    margin: 10px;
     border: 2px dashed #ccc;
     padding: 20px;
     text-align: center;

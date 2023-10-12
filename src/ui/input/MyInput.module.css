@@ -1,4 +1,6 @@
 .myInput {
     border-radius: 5px;
     outline: none;
+    width: 200px;
+    height: 30px;
 }
